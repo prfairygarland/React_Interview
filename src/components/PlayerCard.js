@@ -1,20 +1,38 @@
-import React from 'react'
-import userPng from '../images/63706.jpg'
-
+import React, { useState } from 'react'
 const PlayerCard = (props) => {
     const name = props.player.PFName;
     const skillDesc = props.player.SkillDesc;
     const playerValue = props.player.Value;
-    const userImg = "../images/" + props.player.Id + ".jpg";
+    var upcomingMatch = "";
+    var upcomingMatchTime = "";
+    
+    if(props.player.UpComingMatchesList[0].VsCCode !== ""){
+        upcomingMatch = props.player.CCode + " Vs " + props.player.UpComingMatchesList[0].VsCCode;
+        var theDate = new Date(Date.parse(props.player.UpComingMatchesList[0].MDate + ' UTC'));
+        upcomingMatchTime = (theDate .getDate()) + "-"+ (theDate .getMonth() + 1) + "-"+ (theDate .getFullYear()) + " ";
+        upcomingMatchTime += (theDate .getHours()) + ":" + (theDate .getMinutes() + ":") + (theDate .getSeconds());
+    }else{
+        upcomingMatch = "No Matches";
+        upcomingMatchTime = "Sorry"
+    }
+
+    const [imgUrl,setImgUrl] = useState("/images/" + props.player.Id +".jpg");
+    function callFallbackImg(){
+        setImgUrl("/images/user.png");
+    }
     return(
-        <div className="item">
-            <img className="ui card column" src={userPng} alt="user"></img>
-                <div className="content">
-                    <div className="header">{name}</div><br />
-                    <div><h6>{skillDesc}</h6></div><br />
-                    <div><h6>${playerValue}</h6></div><br />
-                </div>
-        </div>
+        <>
+            <div className="image">
+                <img src={imgUrl} alt="user" onError={()=>callFallbackImg()}></img>
+            </div>
+            <div className="content">
+                <div className="header">{name}</div>
+                <div>Special Skill : {skillDesc}</div>
+                <div>Upcoming Match : {upcomingMatch}</div>
+                <div>Upcoming Match Time : {upcomingMatchTime}</div>
+                <div className="meta price">${playerValue}</div><br />
+            </div>
+        </>
     )
 }
 
